@@ -15,11 +15,12 @@ import json
 import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
-
+import os
 from openai import OpenAI
 
 # Set your OpenAI API key
-client = OpenAI(api_key='sk-xxx')
+client = OpenAI(api_key='sk-pW0E44EugwGbsbxjY10Flcm89UiZI4BTgH02c3E1qvqPRsEl',
+                base_url="https://www.dmxapi.com/v1",)
 
 # Gender ratio
 gender_ratio = [0.351, 0.636]
@@ -83,7 +84,7 @@ def get_random_country():
     country = random.choices(countries, country_ratio)[0]
     if country == "Other":
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=[{
                 "role": "system",
                 "content": "Select a real country name randomly:"
@@ -116,7 +117,7 @@ def get_interested_topics(mbti, age, gender, country, profession):
     [list of topic numbers]
     Ensure your output could be parsed to **list**, don't output anything else."""  # noqa: E501
 
-    response = client.chat.completions.create(model="gpt-3.5-turbo",
+    response = client.chat.completions.create(model="gpt-4o-mini",
                                               messages=[{
                                                   "role": "system",
                                                   "content": prompt
@@ -143,7 +144,7 @@ def generate_user_profile(age, gender, mbti, profession, topics):
     }}
     Ensure the output can be directly parsed to **JSON**, do not output anything else."""  # noqa: E501
 
-    response = client.chat.completions.create(model="gpt-3.5-turbo",
+    response = client.chat.completions.create(model="gpt-4o-mini",
                                               messages=[{
                                                   "role": "system",
                                                   "content": prompt
@@ -218,5 +219,7 @@ if __name__ == "__main__":
     N = 10000  # Target user number
     user_data = generate_user_data(N)
     output_path = 'experiment_dataset/user_data/user_data_10000.json'
+    # 确保目录存在
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     save_user_data(user_data, output_path)
     print(f"Generated {N} user profiles and saved to {output_path}")
